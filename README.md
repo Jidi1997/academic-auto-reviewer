@@ -1,78 +1,68 @@
 # academic-auto-reviewer
 
-**A Multi-Agent, Zero-Hallucination Academic Review Ecosystem built on local Agentic RAG.**
+> **An Autonomous, Zero-Hallucination Review Ecosystem built on Local Agentic RAG.**
 
-`academic-auto-reviewer` is a cutting-edge, autonomous orchestration ecosystem designed for researchers. Instead of relying on a single LLM chat window that hallucinates citations or blindly agrees with your draft, this system coordinates multiple specialized AI agents to rigorously proofread, structurally critique, and fact-check your academic manuscripts against a localized literature database.
-
----
-
-## The AI Cast
-
-The ecosystem is coordinated by a central orchestrator who manages three specialized "workers":
-
-### 👑 00-chief-orchestrator (The Commander)
-The central nervous system of the workflow. She parses your `/paper-review` input, strips the manuscript of token-wasting noise (like images and tables), coordinates Python tools to map your citations, splits the document into chapters, and oversees the parallel dispatch of the worker agents.
-
-### 🗂️ planning-with-files (The Methodology Core)
-A dependency included in this repository that provides the Chief Orchestrator with structured **file-writing discipline**. It enforces the creation of `_plan.md` and `_status.md` files, ensuring all progress, agent dispatches, and error logs are transparently mapped to your local filesystem rather than hidden in a chat window's context.
-
-### 📝 ag1-academic-proofread (The Linguist)
-A bilingual specialist restricted to surface-level linguistic corrections. Fixes typos, enforces Oxford commas, corrects Chinese-English padding, and ensures typographic consistency without ever altering your meaning or phrasing.
-
-### 🏗️ ag2-academic-structure (The Editor)
-The senior structural editor. Evaluates argument flow, flags logical gaps, identifies redundant phrasing, and ensures macro-coherence across your Introduction, Methodology, and Conclusion.
-
-### 🕵️ ag3-academic-factcheck (The Auditor)
-A ruthlessly rigorous fact-checker built on [Natural Language Inference (NLI) constraints](https://en.wikipedia.org/wiki/Textual_entailment). It is physically isolated from web-search APIs. It cross-validates every factual claim in your draft **only** against the retrieved text from your verified local database, completely eliminating LLM citation hallucinations.
+`academic-auto-reviewer` provides an orchestration pipeline designed strictly for researchers. By moving away from standard, single-chat LLM interactions—which are prone to hallucinated citations and unchecked confirmation bias—this ecosystem leverages multiple specialized AI agents. It rigorously audits, structurally critiques, and fact-checks academic manuscripts against a locally verified literature database.
 
 ---
 
-## Architecture Overview
+## ✦ System Architecture & The AI Cast
 
-```mermaid
-graph TD
-    User["User Trigger: /paper-review"] --> Orch["00-chief-orchestrator"]
-    Orch --> Prep["Preprocessing & Citation Resolution Tool"]
-    Prep --> DB[("Local Markdown Database\n(Created by mark-lit-down)")]
-    
-    Orch -- Parallel Dispatch --> Ag1["Ag1: Proofread Chapter By Chapter"]
-    Orch -- Parallel Dispatch --> Ag2["Ag2: Structure Audit"]
-    Orch -- Parallel Dispatch --> Ag3["Ag3: Citation & Fact Check"]
-    
-    DB -- Fetched Excerpts --> Ag3
-    
-    Ag1 --> Out1["Proofreading Log"]
-    Ag2 --> Out2["Structural Flow Log"]
-    Ag3 --> Out3["Zero-Hallucination Accuracy Report"]
+The review pipeline is coordinated by a central orchestrator dispatching parallel analysis tracks.
+
+### `00-chief-orchestrator` : The Commander
+The central nervous system. Parses the manuscript, strips non-rhetorical token noise (tables, embedded bibliography), routes citation data, and oversees parallel agent dispatch.
+
+### `ag1-academic-proofread` : The Linguist
+A bilingual specialist restricted to surface-level linguistic corrections. Enforces typographic consistency and strict grammar rules (e.g., CJK-Latin spacing, Oxford commas) without altering original meaning or argumentative phrasing.
+
+### `ag2-academic-structure` : The Editor
+The structural auditor. Evaluates argument flow, flags logical gaps, identifies redundant phrasing, and ensures macro-coherence across the Introduction, Methodology, and Conclusion sequences.
+
+### `ag3-academic-factcheck` : The Auditor
+A relentless fact-checker strictly constrained by [Natural Language Inference (NLI)](https://en.wikipedia.org/wiki/Textual_entailment). It is physically isolated from live web-search APIs. Every empirical claim is cross-validated **only** against retrieved text from your verified local database, achieving zero-hallucination citation auditing.
+
+### `🗂️ planning-with-files` : The Methodology Core
+Provides the structured **file-writing discipline** for the Orchestrator. By enforcing the creation of `_plan.md` and `_status.md` files, progress and error logs are transparently mapped to the local filesystem rather than obscured within a chat context window.  
+*(Methodology adapted from the exceptional [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) framework).*
+
+---
+
+## ✦ The Zero-Hallucination Guarantee
+
+To rigorously suppress LLM hallucinations, **this ecosystem cannot function without a localized truth-source of your literature.**
+
+Prior to execution, your local database must be constructed using the companion engine:
+👉 **[mark-lit-down (Knowledge Base Engine)](https://github.com/Jidi1997/mark-lit-down)**
+
+---
+
+## ✦ Installation & Execution
+
+1. **Deploy Framework**: Clone and place this `.agent` directory at the root of your primary writing workspace.
+2. **Configure Database Paths**: Verify that python execution scripts located in `.agent/skills/tools/` properly reference the markdown database generated by `mark-lit-down`.
+3. **Execute**: Trigger the review within your IDE or agent terminal.
+
+```bash
+/paper-review drafts/my_manuscript.md --voice third
 ```
 
 > **For a deep dive into how the pipeline works, read the [WORKFLOW GUIDE](docs/WORKFLOW_GUIDE.md).**
 
 ---
 
-## Prerequisites
+## ✦ Output Reports
 
-To maintain a zero-hallucination guarantee, **this workflow cannot function without a local database of your literature.**
-
-Before installing the reviewer, you must build your local database using the companion tool:
-👉 **[mark-lit-down (Knowledge Base Engine)](https://github.com/yourusername/mark-lit-down)**
+Upon completion, your original manuscript remains unmodified. The system synthesizes four actionable, human-readable markdown reports requiring explicit researcher approval:
+- `[Proofreading Log]`
+- `[Structural Flow Log]`
+- `[Zero-Hallucination Accuracy Report]`
+- `[Ghost Citation Report]` 
 
 ---
 
-## Installation & Setup
+## ✦ License & Contribution
 
-1. **Install the framework**: Place this `.agent` folder at the root of your primary writing workspace.
-2. **Configure Paths**: Ensure the python tools located in `.agent/skills/tools/` point to your local database generated by `mark-lit-down`.
-3. **Run the Workflow**: In your AI agent terminal, use the trigger command:
+Released under the [MIT License](LICENSE). Copyright &copy; 2026 Jidi Cao.
 
-```bash
-/paper-review drafts/my_manuscript.md --voice third
-```
-
-## Contributing
-
-The workflow is designed to be modular. You can seamlessly add new specialized agents to the `.agent/skills/` directory (e.g., a methodology-specific checker or a data-visualization advisor) and update the `00-chief-orchestrator`'s dispatch logic to include them.
-
-## License
-
-MIT License
+This ecosystem is highly modular. Researchers are encouraged to integrate new specialist agents (e.g., methodology validators or data-visualization advisors) into the `.agent/skills/` directory and update the `00-chief-orchestrator` dispatch protocol.
