@@ -13,6 +13,9 @@ The ecosystem is coordinated by a central orchestrator who manages three special
 ### 👑 00-chief-orchestrator (The Commander)
 The central nervous system of the workflow. She parses your `/paper-review` input, strips the manuscript of token-wasting noise (like images and tables), coordinates Python tools to map your citations, splits the document into chapters, and oversees the parallel dispatch of the worker agents.
 
+### 🗂️ planning-with-files (The Methodology Core)
+A dependency included in this repository that provides the Chief Orchestrator with structured **file-writing discipline**. It enforces the creation of `_plan.md` and `_status.md` files, ensuring all progress, agent dispatches, and error logs are transparently mapped to your local filesystem rather than hidden in a chat window's context.
+
 ### 📝 ag1-academic-proofread (The Linguist)
 A bilingual specialist restricted to surface-level linguistic corrections. Fixes typos, enforces Oxford commas, corrects Chinese-English padding, and ensures typographic consistency without ever altering your meaning or phrasing.
 
