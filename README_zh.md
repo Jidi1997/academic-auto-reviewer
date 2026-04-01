@@ -21,7 +21,7 @@
 
 ---
 
-## 前提条件 (Prerequisites)
+## 配置条件 (Prerequisites)
 
 在开始安装之前，请确保您的环境满足以下条件：
 - **运行环境**：Python 3.9+ 及 [Antigravity](https://github.com/google/antigravity) 代理框架。

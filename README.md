@@ -21,7 +21,7 @@
 
 ---
 
-## Prerequisites (前提条件)
+## Prerequisites 
 
 Before deployment, ensure your environment meets the following requirements:
 - **Environment**: Python 3.9+ and the [Antigravity](https://github.com/google/antigravity) agent framework.
