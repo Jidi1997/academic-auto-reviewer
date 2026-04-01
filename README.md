@@ -102,9 +102,6 @@ Empowers the workflow to formulate, break down, track, and accomplish complex ta
 
 ## Output Reports
 
-Upon completion, your original manuscript remains unmodified. The system synthesizes three actionable reports:
-- `[Proofreading Log]` — Detailed map of linguistic corrections and typographic consistency checks.
-- `[Structural Flow Log]` — Analysis of argumentative coherence and transitions between sections.
 - `[Fact-Check Validation Report]` — Verification results of empirical claims against your local database. 
 
 ---
@@ -113,39 +110,31 @@ Upon completion, your original manuscript remains unmodified. The system synthes
 
 | | Standard RAG | NotebookLM | Zotero Plugins | **This project** |
 |:--|:--:|:--:|:--:|:--:|
-| **Interaction model** | Q&A on demand | Summarise & chat | Sidebar assist | Autonomous manuscript audit |
-| **Fact validation** | Probabilistic generation | Source-anchored chat | Single-document context | NLI-based claim verification |
-| **Literature source** | Cloud retrieval | Fixed upload set | Per-file or folder | Full Zotero library, locally indexed |
-| **Agent architecture** | Single-turn | Closed black-box | Lightweight plugin | Parallel specialist agents |
-| **Output** | Free-form text reply | Notes & summaries | Inline annotations | Structured review report set |
-| **Privacy** | Cloud-dependent | Google-hosted | Desktop-local | Fully local — no data leaves your machine |
-| **Customisable rules** | Prompt only | None | None | Editable skills per discipline |
+| **Primary focus** | Information Q&A | Synthesis & Chat | Research assist | **Systematic Review** |
+| **Fact validation** | Probabilistic response | Source-anchored chat | Single-document | NLI-based verification |
+| **Literature source** | Cloud retrieval | Uploaded files | Per-file or folder | Local Zotero library |
+| **Architecture** | Single-turn bot | Closed platform | Lightweight plugin | Parallel multi-agents |
+| **Privacy model** | Cloud-dependent | Google-hosted | Desktop-local | Fully local - by design |
+| **Customisation** | Prompts only | Restricted | Restricted | Editable agent skills |
 
-### The Core Distinction
- 
-Most AI literature tools solve the **read** problem — helping you consume and understand existing papers.  
-`academic-auto-reviewer` solves the **review** problem — auditing what *you* have written against your verified literature base.
+### Specialized Review Workflow
 
-Even for ultra-large manuscripts with hundreds to thousands of citations, the multi-agent parallel mechanism enables a one-time, fully automated deep analysis and verification.
+Most AI academic tools are designed for the **Read (Ingest)** phase—helping researchers synthesize and understand existing literature. `academic-auto-reviewer` is designed for the **Review (Output)** phase—auditing a nearly finished manuscript against a verified knowledge base before submission.
 
-#### vs. Standard RAG (Kimi, Poe, LangChain pipelines)
-These systems are built around a passive assumption: the user knows what to ask. They retrieve, then generate — and if your manuscript contains a wrong claim, they will often contextualize it rather than challenge it. This project inverts the flow: it interrogates your manuscript without waiting for a question.
-
-#### vs. NotebookLM
-NotebookLM anchors responses to uploaded sources, which reduces hallucination in Q&A. But it has no concept of *auditing a draft*. It will not tell you that line 14 of your manuscript contradicts Smith (2021), because it was never asked to look. The `auditor` agent here uses NLI inference — every empirical claim is tested for `SUPPORTED / CONTRADICTED / NEUTRAL` against retrieved evidence, not generated from model memory. Additionally, NotebookLM is Google-hosted and closed: you cannot inspect or modify its review logic. Every prompt and skill in this project lives on your local filesystem.
-
-#### vs. Zotero Plugins (ZotGPT, Zotero Connector + GPT)
-Plugin-based tools are tightly coupled to the Zotero desktop client and operate on one paper at a time. `mark-lit-down` decouples the data layer entirely — your Zotero library is converted into a portable, version-controllable Markdown database that any downstream pipeline can consume. The review agents then operate across your *entire* literature base in parallel, not against a single open tab.
+#### Complementary to the AI Ecosystem
+- **vs. Standard RAG (Kimi, Poe, LangChain)**: While general RAG models excel at answering specific prompts based on context, `academic-auto-reviewer` takes a systematic approach to verifying entire drafts. It maps claims to evidence automatically without requiring manually curated queries for every sentence.
+- **vs. NotebookLM**: NotebookLM is a powerful tool for synthesis and source-grounded exploration. This project shifts the focus to *auditing*, specifically designed to cross-check an existing narrative for specific contradictions or gaps in evidence.
+- **vs. Zotero Plugins**: Unlike plugins focused on single-PDF interaction, `mark-lit-down` treats your entire library as a decoupled, portable Markdown database. This allows the agents to operate at scale across thousands of sources simultaneously on the local filesystem.
 
 ---
 
-> **Note**: This workflow is designed for researchers comfortable with command-line tools and a Markdown-based writing environment. If your draft lives in Word or Google Docs, convert it first with [`pandoc`](https://pandoc.org/).
+> **Note**: This workflow is optimized for researchers comfortable with command-line tools and a Markdown-based writing environment. For drafts in Word or Google Docs, convert to Markdown using [`pandoc`](https://pandoc.org/) before execution.
 
 ---
 
 ## License & Credits
 
-Released under the [MIT License](LICENSE). Copyright &copy; 2025–2026 Jidi Cao.
+Released under the [MIT License](LICENSE). Copyright &copy; 2026 Jidi Cao.
 
 ### Credits
 - The Task Planning logic is adapted from the [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) framework.
