@@ -43,9 +43,9 @@
 ```mermaid
 graph LR
     Input(["📄 Markdown 稿件"]) --> orchestrator{"🧠 orchestrator"}
-    orchestrator -->|"自动化处理管线"| linguist["🖋️ linguist"]
-    orchestrator -->|"自动化处理管线"| architect["🏗️ architect"]
-    orchestrator -->|"自动化处理管线"| auditor["🔍 auditor"]
+    orchestrator -->|"任务分发轨迹"| linguist["🖋️ linguist"]
+    orchestrator -->|"任务分发轨迹"| architect["🏗️ architect"]
+    orchestrator -->|"任务分发轨迹"| auditor["🔍 auditor"]
     linguist & architect & auditor --> Output(["📑 审阅报告集"])
 ```
 
@@ -104,6 +104,38 @@ graph LR
 - `[Proofreading Log]` — 语言修改建议与排版一致性核查明细。
 - `[Structural Flow Log]` — 论证连贯性分析及各章节衔接评估。
 - `[Fact-Check Validation Report]` — 基于本地数据库的事实核查结果。
+
+---
+
+## 为什么选择 `academic-auto-reviewer`？
+
+| | 标准 RAG | NotebookLM | Zotero 插件类 | **本项目** |
+|:--|:--:|:--:|:--:|:--:|
+| **交互模式** | 按需问答 | 摘要与对话 | 侧边栏辅助 | 手稿自动审计 |
+| **事实验证** | 概率化生成 (易幻觉) | 锚定源的对话 | 基于单一文件 | 基于 NLI 的断言核对 |
+| **文献来源** | 云端检索 | 固定的文件集 | 单篇文件或目录 | 全量 Zotero 库，本地索引 |
+| **代理架构** | 单次交互 | 封闭式黑盒 | 轻量化插件 | 多代理并行调度 |
+| **输出结果** | 自由文本回复 | 笔记与摘要 | 行间标注 | 结构化审阅报告集 |
+| **隐私性** | 依赖云端 | Google 托管 | 桌面本地运行 | 完全本地 — 数据不出本地 |
+| **规则定制** | 仅限 Prompt | 无 | 无 | 不同学科可编辑技能 |
+
+### 核心区别 (The Core Distinction)
+
+目前市面上大多数 AI 文献工具解决的是 **“读” (Read)** 的问题 —— 帮助您摄入并理解现有的论文。  
+而 `academic-auto-reviewer` 解决的是 **“审” (Review)** 的问题 —— 根据您验证过的文献库，审计**您自己**写下的每一行文字。
+
+#### vs. 标准 RAG (如 Kimi, Poe, LangChain 管线等)
+这类系统通常基于一个被动的假设：用户知道该问什么。它们先检索、后生成。如果您提交的手稿中包含了错误的陈述，它们往往会顺着您的上下文进行润色，而不是对其提出挑战。本项目则反其道而行之：它在不等待用户提问的情况下，主动质询您的手稿。
+
+#### vs. NotebookLM
+NotebookLM 将回答锚定在上传的资源上，这减少了问答中的幻觉。但它没有“审计初稿”的概念。它不会告诉您手稿的第 14 行与 Smith (2021) 的发现相矛盾，因为它从未被要求去寻找这种矛盾。本项目的 `auditor` 代理采用 NLI 推理 —— 每一项实证陈述都会针对检索到的证据进行 `SUPPORTED / CONTRADICTED / NEUTRAL` 的测试，而不是从模型记忆中生成判断。此外，NotebookLM 是闭源且托管在 Google 云端的，您无法查看或修改其审阅逻辑。
+
+#### vs. Zotero 插件 (如 ZotGPT, Zotero Connector + GPT 等)
+插件类工具通常与 Zotero 桌面端强绑定，且一次只能处理一篇论文。`mark-lit-down` 彻底实现了数据层与工具层的解耦 —— 您的 Zotero 库被转化为便携、可版本控制的 Markdown 数据库，任何下游管线都可以调用。审阅代理随后会对您的**整个**文献库进行并行操作，而非仅针对单个打开的标签页。
+
+---
+
+> **注意**：本工作流专为习惯使用命令行工具、偏好 Markdown 写作环境的研究者设计。如果您的初稿在 Word 或 Google Docs 中，请先使用 [`pandoc`](https://pandoc.org/) 进行转换。
 
 ---
 
