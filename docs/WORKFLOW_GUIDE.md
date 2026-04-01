@@ -4,11 +4,11 @@ This document explains the internal mechanisms of the **academic-auto-reviewer**
 
 ---
 
-## The Philosophy: Zero-Hallucination Agentic RAG
+## Core Philosophy: Multi-Agent Collaboration & Zero-Hallucination RAG
 
-Large Language Models (LLMs) are notorious for hallucinating academic citations and falsely confirming empirical claims. 
+At the heart of this system is a multi-agent parallel workflow coordinated by the **Orchestrator**. It dispatches three specialized agents: the **Linguist** for textual polishing, the **Architect** for logical evaluation, and the **Auditor** for the most critical task—fact-checking.
 
-To solve this, our ecosystem enforces **Natural Language Inference (NLI)** constraints on the `auditor` (The NLI Fact-Check Agent). The fact-checking agent is completely restricted from drawing upon its internal training data or using live web-search tools. It can **only** evaluate claims against exact textual excerpts fetched locally.
+Large Language Models (LLMs) are notorious for "hallucinating" academic citations and falsely confirming empirical claims. To solve this, our ecosystem enforces strict **Natural Language Inference (NLI)** constraints on the **Auditor** agent. The agent is completely restricted from drawing upon its internal training data or using live web-search. It evaluates claims **only** against exact textual excerpts fetched from your local Markdown database (pre-processed by *mark-lit-down*), ensuring a closed-loop validation process.
 
 ---
 
