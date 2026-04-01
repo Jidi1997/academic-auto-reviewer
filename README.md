@@ -124,6 +124,8 @@ Upon completion, your original manuscript remains unmodified. The system synthes
 Most AI literature tools solve the **read** problem — helping you consume and understand existing papers.  
 `academic-auto-reviewer` solves the **review** problem — auditing what *you* have written against your verified literature base.
 
+Even for ultra-large manuscripts with hundreds to thousands of citations, the multi-agent parallel mechanism enables a one-time, fully automated deep analysis and verification.
+
 #### vs. Standard RAG (Kimi, Poe, LangChain pipelines)
 These systems are built around a passive assumption: the user knows what to ask. They retrieve, then generate — and if your manuscript contains a wrong claim, they will often contextualize it rather than challenge it. This project inverts the flow: it interrogates your manuscript without waiting for a question.
 

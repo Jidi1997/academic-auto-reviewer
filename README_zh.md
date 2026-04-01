@@ -43,9 +43,9 @@
 ```mermaid
 graph LR
     Input(["📄 Markdown 稿件"]) --> orchestrator{"🧠 orchestrator"}
-    orchestrator -->|"任务分发轨迹"| linguist["🖋️ linguist"]
-    orchestrator -->|"任务分发轨迹"| architect["🏗️ architect"]
-    orchestrator -->|"任务分发轨迹"| auditor["🔍 auditor"]
+    orchestrator -->|"任务分发"| linguist["🖋️ linguist"]
+    orchestrator -->|"任务分发"| architect["🏗️ architect"]
+    orchestrator -->|"任务分发"| auditor["🔍 auditor"]
     linguist & architect & auditor --> Output(["📑 审阅报告集"])
 ```
 
@@ -113,7 +113,7 @@ graph LR
 |:--|:--:|:--:|:--:|:--:|
 | **交互模式** | 按需问答 | 摘要与对话 | 侧边栏辅助 | 手稿自动审计 |
 | **事实验证** | 概率化生成 (易幻觉) | 锚定源的对话 | 基于单一文件 | 基于 NLI 的断言核对 |
-| **文献来源** | 云端检索 | 固定的文件集 | 单篇文件或目录 | 全量 Zotero 库，本地索引 |
+| **文献来源** | 云端检索 | 有限的文件集 | 单篇文件或目录 | 全量 Zotero 库，本地索引 |
 | **代理架构** | 单次交互 | 封闭式黑盒 | 轻量化插件 | 多代理并行调度 |
 | **输出结果** | 自由文本回复 | 笔记与摘要 | 行间标注 | 结构化审阅报告集 |
 | **隐私性** | 依赖云端 | Google 托管 | 桌面本地运行 | 完全本地 — 数据不出本地 |
@@ -123,6 +123,8 @@ graph LR
 
 目前市面上大多数 AI 文献工具解决的是 **“读” (Read)** 的问题 —— 帮助您摄入并理解现有的论文。  
 而 `academic-auto-reviewer` 解决的是 **“审” (Review)** 的问题 —— 根据您验证过的文献库，审计**您自己**写下的每一行文字。
+
+即便面对包含数百至上千篇文献引用的超大型手稿，也能通过多代理并行机制，实现一次性、全自动的深度分析与查证。
 
 #### vs. 标准 RAG (如 Kimi, Poe, LangChain 管线等)
 这类系统通常基于一个被动的假设：用户知道该问什么。它们先检索、后生成。如果您提交的手稿中包含了错误的陈述，它们往往会顺着您的上下文进行润色，而不是对其提出挑战。本项目则反其道而行之：它在不等待用户提问的情况下，主动质询您的手稿。
