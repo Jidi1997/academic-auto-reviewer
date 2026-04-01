@@ -17,16 +17,17 @@
 
 </div>
 
-`academic-auto-reviewer` provides an orchestration pipeline designed strictly for researchers. By moving away from standard, single-chat LLM interactions—which are prone to hallucinated citations and unchecked confirmation bias—this ecosystem leverages multiple specialized AI agents. It rigorously audits, structurally critiques, and fact-checks academic manuscripts against a locally verified literature database.
+`academic-auto-reviewer` provides a **multi-agent review workflow** designed strictly for researchers. By leveraging multiple specialized AI agents, this system audits, structurally critiques, and fact-checks academic manuscripts (e.g., pre-submission self-checks) against a locally verified literature database, effectively mitigating the hallucinated citations and confirmation bias common in standard LLM interactions.
 
 ---
 
-## Evidence-Based Review Pipeline
+## Prerequisites (前提条件)
 
-Every factual claim is validated against your local literature database, not generated from model memory. This ensures a grounded, citation-traceable review process. 
-
-Prior to execution, your local database must be constructed using the companion engine if you need a literature fact-check:
-👉 **[mark-lit-down (Knowledge Base Engine)](https://github.com/Jidi1997/mark-lit-down)**
+Before deployment, ensure your environment meets the following requirements:
+- **Environment**: Python 3.9+ and the [Antigravity](https://github.com/google/antigravity) agent framework.
+- **Data Layer**: For empirical fact-checking, you must first construct a local knowledge base using the companion engine:
+  👉 **[mark-lit-down (Knowledge Base Engine)](https://github.com/Jidi1997/mark-lit-down)**
+- **File Format**: Currently supports academic manuscripts in `.md` (Markdown) format.
 
 *(If you only need linguistic proofreading and structural analysis, the literature fact-check step can be skipped.)*
 
@@ -42,9 +43,9 @@ This project operates within the **Antigravity** agent environment, automating t
 ```mermaid
 graph LR
     Input(["📄 Markdown Manuscript"]) --> orchestrator{"🧠 orchestrator"}
-    orchestrator -->|"Language"| linguist["🖋️ linguist"]
-    orchestrator -->|"Logic"| architect["🏗️ architect"]
-    orchestrator -->|"Evidence"| auditor["🔍 auditor"]
+    orchestrator -->|"Automated Pipeline"| linguist["🖋️ linguist"]
+    orchestrator -->|"Automated Pipeline"| architect["🏗️ architect"]
+    orchestrator -->|"Automated Pipeline"| auditor["🔍 auditor"]
     linguist & architect & auditor --> Output(["📑 Actionable Reports"])
 ```
 
@@ -77,8 +78,7 @@ Evaluates argument flow and macro-coherence. Identifies logical gaps and redunda
 Validates empirical claims using [Natural Language Inference (NLI)](https://en.wikipedia.org/wiki/Textual_entailment). Claims are cross-validated strictly against retrieved text from your verified local database.
 
 ### planner : Task Decomposition Core
-Empowers the workflow to formulate, break down, track, and accomplish complex tasks. By enforcing the creation of `_plan.md` and `_status.md` files, it maps task progression to the local filesystem for transparency.
-*(Methodology adapted from the [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) framework).*
+Empowers the workflow to formulate, break down, track, and accomplish complex tasks. By mapping task progression in real-time, it ensures the entire review process remains transparent and controlled.
 
 ---
 
@@ -86,7 +86,7 @@ Empowers the workflow to formulate, break down, track, and accomplish complex ta
 
 1. **Deploy Framework**: Clone and place this `.agent` directory at the root of your primary writing workspace.
 2. **Configure Database Paths**: Ensure that your local markdown database is correctly indexed within the agent's RAG skill (check `.agent/skills/ag3-academic-factcheck/SKILL.md` for path references).
-3. **Execute**: Trigger the review within your IDE or agent terminal.
+3. **Execution**: Trigger the review within your IDE or agent terminal. **Ensure you are at the project root directory** before running the command:
 
 ```bash
 /paper-review drafts/my_manuscript.md --voice third
@@ -107,8 +107,10 @@ Upon completion, your original manuscript remains unmodified. The system synthes
 
 ---
 
-## License & Contribution
+## License & Credits
 
-Released under the [MIT License](LICENSE). Copyright &copy; 2026 Jidi Cao.
+Released under the [MIT License](LICENSE). Copyright &copy; 2025–2026 Jidi Cao.
 
-This ecosystem is highly modular. Researchers are encouraged to integrate new specialist agents (e.g., methodology validators or data-visualization advisors) into the `.agent/skills/` directory and update the `00-chief-orchestrator` dispatch protocol.
+### Credits
+- The Task Planning logic is adapted from the [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) framework.
+- Researchers are encouraged to integrate new specialist agents into the `.agent/skills/` directory and update the `orchestrator` dispatch protocol.
