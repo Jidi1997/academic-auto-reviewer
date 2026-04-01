@@ -119,7 +119,7 @@ Empowers the workflow to formulate, break down, track, and accomplish complex ta
 
 ### Specialized Review Workflow
 
-Most AI academic tools are designed for the ** Read (Ingest) ** phase—helping researchers synthesize and understand existing literature. `academic-auto-reviewer` is designed for the ** Review (Output) ** phase—auditing a nearly finished manuscript against a verified knowledge base before submission.
+Most AI academic tools are designed for the **Read (Ingest)** phase—helping researchers synthesize and understand existing literature. `academic-auto-reviewer` is designed for the **Review (Output)** phase—auditing a nearly finished manuscript against a verified knowledge base before submission.
 
 #### Complementary to the AI Ecosystem
 - **vs. Standard RAG (Kimi, Poe, LangChain)**: While general RAG models excel at answering specific prompts based on context, `academic-auto-reviewer` takes a systematic approach to verifying entire drafts. It maps claims to evidence automatically without requiring manually curated queries for every sentence.
