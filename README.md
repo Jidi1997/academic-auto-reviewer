@@ -16,6 +16,7 @@
 **[English]** | [中文](README_zh.md)
 
 </div>
+
 > Most AI literature tools help you **read** papers. This one helps you **review** your own — cross-checked against thousands of references in your local library.
  
 `academic-auto-reviewer` is an automated multi-agent review workflow built for researchers who demand more than a chatbot's opinion. It does not answer questions; it interrogates your manuscript. Three isolated specialist agents run in parallel across your entire literature base to simultaneously audit language, structure, and factual claims—eliminating hallucinated citations and confirmation bias by architectural design.
