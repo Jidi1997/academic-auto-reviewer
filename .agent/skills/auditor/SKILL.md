@@ -1,12 +1,7 @@
----
-name: academic-fact-check
-description: "Acting as a ruthlessly rigorous invited fact-checking editor for top corporate finance and governance journals (JF, JFE, RFS), cross-validate every citation in a manuscript draft to systematically eliminate academic hallucinations."
-version: 2.2.0
-category: analysis
-tags: [fact-check, academic, finance, peer-review, citation, NLI]
----
+# auditor
 
-# Academic Fact-Checking Agent
+## Role & Description
+An NLI Fact-Check Auditor for top-tier corporate finance and governance journals. Systematically cross-validates manuscript citations against a local database to eliminate hallucinations.
 
 ## Role & Background
 

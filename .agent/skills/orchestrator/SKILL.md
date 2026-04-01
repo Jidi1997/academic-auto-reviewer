@@ -7,9 +7,9 @@ A parallel dispatch engine for academic manuscript review. Receives a single Mar
 
 ## Skill Dependencies
 
-This agent borrows **file-writing discipline** from `planning-with-files` (located at `../../../planning-with-files/SKILL.md`).
+This agent borrows **file-writing discipline** from the `planner` skill (located at `../../../planner/SKILL.md`).
 
-**Principles adopted from planning-with-files:**
+**Principles adopted from the planner:**
 
 | Principle | How it applies here |
 |---|---|
@@ -65,9 +65,9 @@ Derive all output paths from the input filename (stem only, no extension):
 | `{dir}` | Directory of the input file | `drafts/` |
 | `{plan_file}` | `{dir}{stem}_plan.md` | `drafts/0316-初稿-working_plan.md` |
 | `{status_file}` | `{dir}{stem}_status.md` | `drafts/0316-初稿-working_status.md` |
-| `{report_A1}` | `{dir}{stem}_report_A1_proofread.md` | `drafts/0316-初稿-working_report_A1_proofread.md` |
-| `{report_A2}` | `{dir}{stem}_report_A2_structure.md` | `drafts/0316-初稿-working_report_A2_structure.md` |
-| `{report_A3}` | `{dir}{stem}_report_A3_factcheck.md` | `drafts/0316-初稿-working_report_A3_factcheck.md` |
+| `{report_linguist}` | `{dir}{stem}_report_linguist.md` | `drafts/0316-report_linguist.md` |
+| `{report_architect}` | `{dir}{stem}_report_architect.md` | `drafts/0316-report_architect.md` |
+| `{report_auditor}` | `{dir}{stem}_report_auditor.md` | `drafts/0316-report_auditor.md` |
 
 Parse the `--voice` flag (default: `first`):
 
@@ -108,14 +108,14 @@ Write `{plan_file}` with the following content before dispatching any agent.
 
 | Agent | Task | Scope | Output File |
 |---|---|---|---|
-| Agent 1 | Bilingual Proofreading | All in-scope body text | {report_A1} |
-| Agent 2 | Structure & Coherence | All in-scope body text | {report_A2} |
-| Agent 3 | Citation Fact-Check | {citation_count} citation markers | {report_A3} |
+| linguist | Bilingual Proofreading | All in-scope body text | {report_linguist} |
+| architect | Structure & Coherence | All in-scope body text | {report_architect} |
+| auditor | Citation Fact-Check | {citation_count} citation markers | {report_auditor} |
 
 ## Dispatch Status
-- [ ] Agent 1 dispatched
-- [ ] Agent 2 dispatched
-- [ ] Agent 3 dispatched
+- [ ] linguist dispatched
+- [ ] architect dispatched
+- [ ] auditor dispatched
 ```
 
 > After writing this file, inform the user:
@@ -165,20 +165,20 @@ Dispatch all three agents simultaneously. Do not wait for one agent to finish be
 
 ### Dispatch Instructions per Agent
 
-**Agent 1 — Proofreader**
+**linguist**
 - Input: Iterate through all chapter files in `{dir}{stem}_chapters/` (read-only)
 - Instruction: "Proofread the following chapters according to your SKILL.md. Output a single consolidated `[Proofreading Log]`."
-- Write output to: `{report_A1}`
+- Write output to: `{report_linguist}`
 
-**Agent 2 — Structure & Coherence Editor**
+**architect**
 - Input: Iterate through all chapter files in `{dir}{stem}_chapters/` (read-only)
 - Instruction: "Analyse the following chapters for structural and rhetorical issues according to your SKILL.md. **Voice setting: `{voice}`** — all suggested revisions involving authorial voice must use {voice}-person wording. Output a single consolidated `[Structure Log]`."
-- Write output to: `{report_A2}`
+- Write output to: `{report_architect}`
 
-**Agent 3 — Fact-Checker**
+**auditor**
 - Input: `{dir}{stem}_citations.json` (read-only)
 - Instruction: "Fact-check all citations using the provided JSON data according to your SKILL.md. Output the full Citation Audit Report."
-- Write output to: `{report_A3}`
+- Write output to: `{report_auditor}`
 
 ---
 
@@ -196,9 +196,9 @@ After each agent completes and its report file is written, append to `{status_fi
 
 | Agent | Status | Completed At | Report File | Summary |
 |---|---|---|---|---|
-| Agent 1 | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_A1} | {N} changes found |
-| Agent 2 | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_A2} | {N} issues found |
-| Agent 3 | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_A3} | 🟢{n} / 🔴{n} / 🟡{n} |
+| linguist | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_linguist} | {N} changes found |
+| architect | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_architect} | {N} issues found |
+| auditor | ✅ Done / ⏳ Running / ❌ Failed | {timestamp} | {report_auditor} | 🟢{n} / 🔴{n} / 🟡{n} |
 ```
 
 Update this file incrementally as each agent finishes. Do not wait for all three to complete before writing.
@@ -224,8 +224,8 @@ Error handling follows the planning-with-files **3-Strike Protocol**. Every fail
 
 | # | Agent | Attempt | Action Taken | Error | Outcome |
 |---|---|---|---|---|---|
-| 1 | Agent 1 | 1 | Initial dispatch | Returned empty output | Re-dispatching with format reminder |
-| 2 | Agent 1 | 2 | Re-dispatch with format reminder | Returned empty output again | Dispatching smoke test on lines 1–100 |
+| 1 | linguist | 1 | Initial dispatch | Returned empty output | Re-dispatching with format reminder |
+| 2 | linguist | 2 | Re-dispatch with format reminder | Returned empty output again | Dispatching smoke test on lines 1–100 |
 ```
 
 ### Special Cases (valid outcomes, not errors)
@@ -257,9 +257,9 @@ Open `{plan_file}` and replace each `- [ ]` in the Dispatch Status section with 
 **After:**
 ```markdown
 ## Dispatch Status
-- [x] Agent 1 dispatched ✅
-- [x] Agent 2 dispatched ✅
-- [x] Agent 3 dispatched ✅
+- [x] linguist dispatched ✅
+- [x] architect dispatched ✅
+- [x] auditor dispatched ✅
 ```
 
 > ⚠️ **This step is mandatory.** Do not skip it. The plan file is the persistent record of task completion.
@@ -272,9 +272,9 @@ Then notify the user:
 ✅ Review complete for: {stem}
 
 Reports ready:
-- Proofreading:  {report_A1}
-- Structure:     {report_A2}
-- Fact-check:    {report_A3}
+- Proofreading:  {report_linguist}
+- Structure:     {report_architect}
+- Fact-check:    {report_auditor}
 
 Status log:      {status_file}
 Plan file:       {plan_file}
