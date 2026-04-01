@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/Image_autoreview.png" width="600" alt="academic-auto-reviewer cover"/>
+<img src="docs/Image_clean_autoreview.png" width="600" alt="academic-auto-reviewer cover"/>
 
 # 📚 academic-auto-reviewer
 
