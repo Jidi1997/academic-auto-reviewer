@@ -4,7 +4,7 @@
 
 # academic-auto-reviewer
 
-*A local workflow for reviewing academic manuscripts: language, structure, and citation checks against your own literature base.*
+*A local workflow for reviewing academic manuscripts: language, argument structure, and citation checks against your own literature base.*
 
 **[English]** | [中文](README_zh.md)
 
@@ -14,8 +14,9 @@
 
 ## What It Does
 
-- Reviews an academic manuscript without modifying the original file
-- Generates separate reports for language issues, structural issues, and citation checks
+- Reviews near-final academic drafts across language, argument structure, and citation use
+- Generates separate reports from specialist agents for targeted revision
+- Provides side-by-side checks and professional revision suggestions instead of opaque edits
 - Uses a local literature database for grounded citation auditing
 - Supports English and Chinese manuscripts
 
@@ -27,12 +28,6 @@ This project is designed for:
 - Users who prefer local, inspectable workflows
 - Authors working in Markdown directly or converting from Word or LaTeX for AI-assisted review
 
-This project is not currently designed for:
-
-- Word-native in-place editing workflows
-- PDF-first reading or annotation
-- Fully hosted, zero-setup use cases
-
 Markdown is the current working format for the review pipeline because it is easy to inspect, split, and process with AI agents. If your manuscript is in another format, converting it with `pandoc` is usually a low-friction step.
 
 ## Input and Output
@@ -40,10 +35,12 @@ Markdown is the current working format for the review pipeline because it is eas
 | Input | Output |
 |---|---|
 | `my_manuscript.md` | `*_report_linguist.md` |
-| optional local literature database | `*_report_architect.md` |
-| optional citation / bibliography context | `*_report_auditor.md` |
+|  | `*_report_architect.md` |
+|  | `*_report_auditor.md` |
 
 The original manuscript is left unchanged.
+
+For citation audit / fact check, the workflow additionally depends on a prepared local literature database in Markdown format. This database can be built with [mark-lit-down](https://github.com/Jidi1997/mark-lit-down).
 
 ## Quickstart
 
@@ -68,14 +65,13 @@ pandoc my_manuscript.tex -o my_manuscript.md
 
 ```mermaid
 graph LR
-    A["Manuscript"] --> B["Preprocess"]
-    B --> C["Split by Section"]
-    C --> D["Language Review"]
-    C --> E["Structure Review"]
-    B --> F["Citation Audit (optional)"]
-    D --> G["Reports"]
-    E --> G
-    F --> G
+    Input["Manuscript"] --> orchestrator{"Academic Review Orchestrator"}
+    orchestrator -->|"Task Dispatch"| linguist["linguist"]
+    orchestrator -->|"Task Dispatch"| architect["architect"]
+    orchestrator -->|"Task Dispatch"| auditor["auditor"]
+    linguist --> Output["Review Reports"]
+    architect --> Output
+    auditor --> Output
 ```
 
 The workflow includes three review tracks:
@@ -83,6 +79,16 @@ The workflow includes three review tracks:
 - `linguist`: language and style issues
 - `architect`: structure and argument flow
 - `auditor`: citation-grounded claim checking
+
+The orchestrator coordinates preprocessing, task dispatch, and report collection across the three specialist agents.
+
+## Citation Audit Judgments
+
+The `auditor` does not just flag issues. It distinguishes among three judgment types and returns evidence-grounded revision guidance:
+
+- `entailment`: the cited source supports the claim
+- `contradiction`: the claim misstates, reverses, or over-extends the cited source
+- `neutral`: the available evidence is insufficient to verify the claim
 
 ## Current Scope
 
@@ -92,8 +98,6 @@ The workflow includes three review tracks:
 - Citation audit backend: local literature database
 - Current packaged runtime: [Antigravity](https://github.com/google/antigravity)
 - Workflow design: modular and portable to other agent runtimes
-
-If you only need language and structure review, the citation-audit step can be skipped.
 
 ## Why This Project
 
