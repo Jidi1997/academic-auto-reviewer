@@ -2,140 +2,139 @@
 
 <img src="docs/Image_clean_autoreview.png" width="600" alt="academic-auto-reviewer cover"/>
 
-# 📚 academic-auto-reviewer
+# academic-auto-reviewer
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Framework-Antigravity-purple.svg?style=for-the-badge&logo=google" alt="Framework"/>
-  <img src="https://img.shields.io/badge/Language-Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Language"/>
-  <img src="https://img.shields.io/badge/Concept-Agentic%20RAG-orange?style=for-the-badge&logo=probot&logoColor=white" alt="Concept"/>
-  <img src="https://img.shields.io/badge/Supports-EN%20|%20中文-brightgreen?style=for-the-badge" alt="Bilingual"/>
-</p>
-
-*A grounded, citation-traceable review pipeline built on local agentic RAG.*
+*A local workflow for reviewing academic manuscripts: language, structure, and citation checks against your own literature base.*
 
 **[English]** | [中文](README_zh.md)
 
 </div>
 
-> Most AI literature tools help you **read** papers. This one helps you **review** your own — cross-checked against thousands of references in your local library.
- 
-`academic-auto-reviewer` is an automated multi-agent review workflow built for researchers who demand more than a chatbot's opinion. It does not answer questions; it interrogates your manuscript. Three isolated specialist agents run in parallel across your entire literature base to simultaneously audit language, structure, and factual claims—eliminating hallucinated citations and confirmation bias by architectural design.
+`academic-auto-reviewer` is a manuscript review workflow for researchers who want a structured, local-first review before submission. It reviews a near-final draft, generates separate reports for language and structure, and can optionally audit citation-grounded claims against a local literature database.
 
----
+## What It Does
 
-## Prerequisites 
+- Reviews an academic manuscript without modifying the original file
+- Generates separate reports for language issues, structural issues, and citation checks
+- Uses a local literature database for grounded citation auditing
+- Supports English and Chinese manuscripts
 
-Before deployment, ensure your environment meets the following requirements:
-- **Environment**: Python 3.9+ and the [Antigravity](https://github.com/google/antigravity) agent framework.
-- **Data Layer**: For empirical fact-checking, you must first construct a local knowledge base using the companion engine:
-  👉 **[mark-lit-down (Knowledge Base Engine)](https://github.com/Jidi1997/mark-lit-down)**
-- **File Format**: Currently supports academic manuscripts in `.md` (Markdown) format.
+## Who It's For
 
-*(If you only need linguistic proofreading and structural analysis, the literature fact-check step can be skipped.)*
+This project is designed for:
 
----
+- Researchers preparing a near-final draft for submission
+- Users who prefer local, inspectable workflows
+- Authors working in Markdown directly or converting from Word or LaTeX for AI-assisted review
 
-## Workflow Features
+This project is not currently designed for:
 
-This project operates within the **Antigravity** agent environment, automating tedious manuscript review tasks while maintaining academic rigor.
-- **Bilingual Support:** Fully capable of processing and reviewing manuscripts in both **English** and **Chinese**.
-- **Input Processing:** The system ingests standard `.md` (Markdown) academic manuscripts.
-- **Output:** Instead of silently altering your original text, it generates four specialized, actionable markdown reports highlighting structured feedback.
+- Word-native in-place editing workflows
+- PDF-first reading or annotation
+- Fully hosted, zero-setup use cases
 
-```mermaid
-graph LR
-    Input(["📄 Markdown Manuscript"]) --> orchestrator{"🧠 orchestrator"}
-    orchestrator -->|"Task Dispatch"| linguist["🖋️ linguist"]
-    orchestrator -->|"Task Dispatch"| architect["🏗️ architect"]
-    orchestrator -->|"Task Dispatch"| auditor["🔍 auditor"]
-    linguist & architect & auditor --> Output(["📑 Actionable Reports"])
-```
+Markdown is the current working format for the review pipeline because it is easy to inspect, split, and process with AI agents. If your manuscript is in another format, converting it with `pandoc` is usually a low-friction step.
 
-> **Not using Markdown?** 
-> If your draft is in another format, use [`pandoc`](https://pandoc.org/) to quickly convert it before running the workflow:
-> ```bash
-> # Word (.docx) to Markdown
-> pandoc my_manuscript.docx -o my_manuscript.md
-> 
-> # LaTeX (.tex) to Markdown
-> pandoc my_manuscript.tex -o my_manuscript.md
-> ```
+## Input and Output
 
----
+| Input | Output |
+|---|---|
+| `my_manuscript.md` | `*_report_linguist.md` |
+| optional local literature database | `*_report_architect.md` |
+| optional citation / bibliography context | `*_report_auditor.md` |
 
-## System Architecture & Agent Function
+The original manuscript is left unchanged.
 
-The review pipeline is coordinated by a central orchestrator dispatching parallel analysis tracks.
+## Quickstart
 
-### orchestrator : Pipeline Coordinator
-The coordination engine. Parses the manuscript, removes non-rhetorical noise (tables, formatting), routes citation data, and oversees parallel agent execution.
+1. Prepare your manuscript in Markdown, or convert from Word / LaTeX with `pandoc`
+2. Optionally prepare a local literature database for citation auditing
+3. Run the review workflow in a supported agent runtime
 
-### linguist : Surface & Style Agent
-A bilingual specialist focused on linguistic accuracy. Enforces typographic consistency and academic grammar (e.g., CJK-Latin spacing, punctuation rules) without altering original meaning.
-
-### architect : Structural Coherence Agent
-Evaluates argument flow and macro-coherence. Identifies logical gaps and redundant phrasing across the introduction, methodology, and conclusion.
-
-### auditor : NLI Fact-Check Agent
-Validates empirical claims using [Natural Language Inference (NLI)](https://en.wikipedia.org/wiki/Textual_entailment). Claims are cross-validated strictly against retrieved text from your verified local database.
-
-### planner : Task Decomposition Core
-Empowers the workflow to formulate, break down, track, and accomplish complex tasks. By mapping task progression in real-time, it ensures the entire review process remains transparent and controlled.
-
----
-
-## Installation & Execution
-
-1. **Deploy Framework**: Clone and place this `.agent` directory at the root of your primary writing workspace.
-2. **Configure Database Paths**: Ensure that your local markdown database is correctly indexed within the agent's RAG skill (check `.agent/skills/ag3-academic-factcheck/SKILL.md` for path references).
-3. **Execution**: Trigger the review within your IDE or agent terminal. **Ensure you are at the project root directory** before running the command:
+Example:
 
 ```bash
 /paper-review drafts/my_manuscript.md --voice third
 ```
 
-*Note on Language Voice (`--voice`): You can align the proofreader to the chosen narrative perspective of your paper. Set this to `first` (e.g., "We examine..."), `second` (e.g., "You can see..."), or `third` (e.g., "This study examines...") to ensure consistent tone across the manuscript.*
+Useful conversions:
 
-> **For a deep dive into how the pipeline works, read the [WORKFLOW GUIDE](docs/WORKFLOW_GUIDE.md).**
+```bash
+pandoc my_manuscript.docx -o my_manuscript.md
+pandoc my_manuscript.tex -o my_manuscript.md
+```
 
----
+## Workflow Overview
 
-## Output Reports
+```mermaid
+graph LR
+    A["Manuscript"] --> B["Preprocess"]
+    B --> C["Split by Section"]
+    C --> D["Language Review"]
+    C --> E["Structure Review"]
+    B --> F["Citation Audit (optional)"]
+    D --> G["Reports"]
+    E --> G
+    F --> G
+```
 
-- `[Fact-Check Validation Report]` — Verification results of empirical claims against your local database. 
+The workflow includes three review tracks:
 
----
+- `linguist`: language and style issues
+- `architect`: structure and argument flow
+- `auditor`: citation-grounded claim checking
 
-## Why `academic-auto-reviewer`?
+## Current Scope
 
-| | Standard RAG | NotebookLM | Zotero Plugins | **This project** |
-|:--|:--:|:--:|:--:|:--:|
-| **Primary focus** | Information Q&A | Synthesis & Chat | Research assist | **Systematic Review** |
-| **Fact validation** | Probabilistic response | Source-anchored chat | Single-document | NLI-based verification |
-| **Literature source** | Cloud retrieval | Uploaded files | Per-file or folder | Local Zotero library |
-| **Architecture** | Single-turn bot | Closed platform | Lightweight plugin | Parallel multi-agents |
-| **Privacy model** | Cloud-dependent | Google-hosted | Desktop-local | Fully local - by design |
-| **Customisation** | Prompts only | Restricted | Restricted | Editable agent skills |
+- Input format: Markdown manuscripts used as the working review format
+- Typical source formats: Markdown, Word, and LaTeX via conversion
+- Review language: English and Chinese
+- Citation audit backend: local literature database
+- Current packaged runtime: [Antigravity](https://github.com/google/antigravity)
+- Workflow design: modular and portable to other agent runtimes
 
-### Specialized Review Workflow
+If you only need language and structure review, the citation-audit step can be skipped.
 
-Most AI academic tools are designed for the **Read (Ingest)** phase—helping researchers synthesize and understand existing literature. `academic-auto-reviewer` is designed for the **Review (Output)** phase—auditing a nearly finished manuscript against a verified knowledge base before submission.
+## Why This Project
 
-#### Complementary to the AI Ecosystem
-- **vs. Standard RAG (Kimi, Poe, LangChain)**: While general RAG models excel at answering specific prompts based on context, `academic-auto-reviewer` takes a systematic approach to verifying entire drafts. It maps claims to evidence automatically without requiring manually curated queries for every sentence.
-- **vs. NotebookLM**: NotebookLM is a powerful tool for synthesis and source-grounded exploration. This project shifts the focus to *auditing*, specifically designed to cross-check an existing narrative for specific contradictions or gaps in evidence.
-- **vs. Zotero Plugins**: Unlike plugins focused on single-PDF interaction, `mark-lit-down` treats your entire library as a decoupled, portable Markdown database. This allows the agents to operate at scale across thousands of sources simultaneously on the local filesystem.
+Many AI tools help researchers read papers, summarize sources, or answer questions. `academic-auto-reviewer` focuses on a different stage: reviewing your own manuscript before submission.
 
----
+Its goal is to make draft review more systematic by separating three tasks that are often mixed together:
 
-> **Note**: This workflow is optimized for researchers comfortable with command-line tools and a Markdown-based writing environment. For drafts in Word or Google Docs, convert to Markdown using [`pandoc`](https://pandoc.org/) before execution.
+- language cleanup
+- structural diagnosis
+- evidence-grounded citation auditing
 
----
+Rather than promising perfect verification, the workflow is designed to make claims easier to inspect, challenge, and revise using local evidence.
 
-## License & Credits
+## Documentation
+
+- [Workflow Guide](docs/WORKFLOW_GUIDE.md)
+- [Chinese Workflow Guide](docs/WORKFLOW_GUIDE_zh.md)
+
+## FAQ
+
+### Do I need Antigravity?
+
+No in principle. The workflow design is general. This release is currently packaged for Antigravity.
+
+### Do I need a local literature database?
+
+Only for citation auditing. Language and structure review can run without it.
+
+### Does it modify my manuscript?
+
+No. The workflow generates review reports and leaves the original manuscript unchanged.
+
+### Can I use Word or LaTeX?
+
+Yes. The current working format is Markdown, but converting from Word or LaTeX with `pandoc` is usually straightforward.
+
+## License
 
 Released under the [MIT License](LICENSE). Copyright &copy; 2026 Jidi Cao.
 
-### Credits
-- The Task Planning logic is adapted from the [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) framework.
-- Researchers are encouraged to integrate new specialist agents into the `.agent/skills/` directory and update the `orchestrator` dispatch protocol.
+## Credits
+
+- The planning logic draws on ideas from [planning-with-files](https://github.com/othmanadi/planning-with-files).
+- The local literature workflow is designed to work well with [mark-lit-down](https://github.com/Jidi1997/mark-lit-down).

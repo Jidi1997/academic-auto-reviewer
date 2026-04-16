@@ -1,145 +1,140 @@
 <div align="center">
- 
-<img src="docs/Image_clean_autoreview.png" width="600" alt="academic-auto-reviewer cover"/>
- 
-# 📚 academic-auto-reviewer
- 
-<p align="center">
-  <img src="https://img.shields.io/badge/Framework-Antigravity-purple.svg?style=for-the-badge&logo=google" alt="Framework"/>
-  <img src="https://img.shields.io/badge/Language-Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Language"/>
-  <img src="https://img.shields.io/badge/Concept-Agentic%20RAG-orange?style=for-the-badge&logo=probot&logoColor=white" alt="Concept"/>
-  <img src="https://img.shields.io/badge/Supports-EN%20|%20中文-brightgreen?style=for-the-badge" alt="Bilingual"/>
-</p>
 
-*基于本地 Agentic RAG 架构，构建证据驱动、引用可溯源的多智能体学术审阅工作流。*
+<img src="docs/Image_clean_autoreview.png" width="600" alt="academic-auto-reviewer cover"/>
+
+# academic-auto-reviewer
+
+*一套面向研究者的本地化学术审阅工作流：检查语言、结构，并基于你的文献库核对引用。*
 
 [English](README.md) | **[中文]**
 
 </div>
 
-> 大多数 AI 文献工具辅助你**阅读**论文，而本项目致力于**审阅**你的研究输出——基于本地库中数千篇真实文献，逐条核实你的每一句论断。
- 
-`academic-auto-reviewer` 是一套面向研究者的自动化多智能体审阅工作流。它不只是被动地回答问题，而是主动深度剖析手稿内容。通过三个相互隔离的专业智能体并行协作，系统在您的完整本地文献库上同步展开语言校对、结构评议与事实核查，从底层机制上根除引用幻觉与事实偏差。
+`academic-auto-reviewer` 是一套面向研究者的稿件审阅工作流，适用于投稿前的结构化自检。它面向接近定稿的学术手稿，输出独立的语言、结构和引用核查报告；其中引用核查模块可选接入本地文献库，以提供更可追溯的证据支持。
 
----
+## 它能做什么
 
-## 配置条件 (Prerequisites)
+- 对学术稿件进行系统化审阅，不直接修改原稿
+- 分别生成语言问题、结构问题、引用核查三类报告
+- 可基于本地文献库进行引用与论断核对
+- 支持英文和中文稿件
 
-在开始安装之前，请确保您的环境满足以下条件：
-- **运行要求**：Python 3.9+ 及 [Antigravity](https://github.com/google/antigravity) 代理框架。
-- **数据基础**：如需执行实证核查，必须先使用配套引擎构建本地文献库：
-  👉 **[mark-lit-down (知识库构建引擎)](https://github.com/Jidi1997/mark-lit-down)**
-- **文件格式**：目前仅支持 `.md` (Markdown) 格式的学术稿件。
+## 适合谁
 
-*(如果您仅需要语言润色和结构分析，可以跳过文献事实核查步骤。)*
+这个项目适合：
 
----
+- 正在准备投稿、希望在提交前做系统化自检的研究者
+- 偏好本地、可检查、可控工作流的用户
+- 直接使用 Markdown 写作，或愿意先从 Word / LaTeX 转换后再进行 AI 协作审阅的作者
 
-## 核心特性
+这个项目目前不主要面向：
 
-本项目运行于 **Antigravity** 代理环境，在保持学术严谨性的同时，自动化处理繁琐的论文审阅任务。
-- **双语支持：** 全面支持 **英文** 和 **中文** 学术稿件的交叉审阅。
-- **过程透明：** 每一个审阅操作都完整记录在 `_plan.md` 和 `_status.md` 日志中，确保执行过程全程可追溯。
-- **非侵入式输出：** 系统不会直接修改您的原始文档，而是生成三份专业、可操作的 Markdown 评估报告。
+- 直接在 Word 中原位修改的编辑流程
+- 以 PDF 阅读和批注为核心的使用场景
+- 零配置、纯托管式的在线使用方式
 
-```mermaid
-graph LR
-    Input(["📄 Markdown 稿件"]) --> orchestrator{"🧠 orchestrator"}
-    orchestrator -->|"任务分发"| linguist["🖋️ linguist"]
-    orchestrator -->|"任务分发"| architect["🏗️ architect"]
-    orchestrator -->|"任务分发"| auditor["🔍 auditor"]
-    linguist & architect & auditor --> Output(["📑 审阅报告集"])
-```
+Markdown 是当前工作流的协作格式，因为它更适合被 AI agent 拆分、检查和处理。如果你的稿件来自 Word 或 LaTeX，先通过 `pandoc` 转换通常不会带来太大阻力。
 
-> **不是 Markdown 格式？**
-> 如果您的初稿是其他格式（如 Word 或 LaTeX），请在运行工作流前使用 [`pandoc`](https://pandoc.org/) 进行快速转换：
-> ```bash
-> # Word (.docx) 转 Markdown
-> pandoc my_manuscript.docx -o my_manuscript.md
-> 
-> # LaTeX (.tex) 转 Markdown
-> pandoc my_manuscript.tex -o my_manuscript.md
-> ```
+## 输入与输出
 
----
+| 输入 | 输出 |
+|---|---|
+| `my_manuscript.md` | `*_report_linguist.md` |
+| 可选的本地文献库 | `*_report_architect.md` |
+| 可选的引用 / 书目信息 | `*_report_auditor.md` |
 
-## 系统架构与智能体职能剖析
+原始稿件文件保持不变。
 
-整个审阅管线由中心调度器 (Orchestrator) 协调，并分发给多个并行的分析轨道。
+## 快速开始
 
-### orchestrator : 调度中心
-核心编排引擎。负责解析稿件、清除非文本噪声、分发引用数据，并监督各智能体的并行执行。
+1. 准备 Markdown 格式的学术稿件，或先从 Word / LaTeX 转换
+2. 如需引用核查，准备本地文献库
+3. 在支持的 agent 运行环境中执行工作流
 
-### linguist : 语言校对智能体
-精通双语的专家级智能体，专注于学术表达。在不改变原意的前提下，严格执行学术语法规范与排版一致性（如中英文混排空格、标点符号规范等）。
-
-### architect : 结构与逻辑智能体
-评估论证流向与宏观逻辑。识别摘要、引言、方法论及结论部分存在的逻辑断层或冗余表达。
-
-### auditor : 证据驱动的事实核查智能体
-利用 [自然语言推理 (NLI)](https://zh.wikipedia.org/wiki/文本蕴涵) 技术验证实证陈述。所有论断均需基于本地知识库提取的原始内容进行严格的交叉验证。
-
-### planner : 任务规划中心
-赋予工作流制定、拆解、跟踪和闭合复杂任务的能力。通过对任务进度的实时映射，确保审阅过程的高度透明与可控。
-
----
-
-## 安装与执行
-
-1. **部署框架**：克隆并将此 `.agent` 目录放置在您的论文写作工作区的根目录下。
-2. **配置数据库路径**：确保您的本地 Markdown 数据库已在代理的 RAG 技能中正确索引（详见 `.agent/skills/auditor/SKILL.md` 中的路径引用）。
-3. **执行指令**：在您的 IDE 环境或 Antigravity 终端中，**进入项目根目录**并运行以下命令：
+示例：
 
 ```bash
 /paper-review drafts/my_manuscript.md --voice third
 ```
 
-*关于语称 (`--voice`)：您可以根据论文的叙述人称调整润色风格。可选值为 `first` (如 "We examine..." / "本研究考察了...")、`second` (如 "You can see..." / "可以看到...") 或 `third` (如 "This study examines..." / "本研究发现...")，以确保全文色调统一。*
+常见转换方式：
 
-> **如需深入了解工作流运行机制，请阅读 [工作流指南 (中文版)](docs/WORKFLOW_GUIDE_zh.md)。**
+```bash
+pandoc my_manuscript.docx -o my_manuscript.md
+pandoc my_manuscript.tex -o my_manuscript.md
+```
 
----
+## 工作流概览
 
-## 输出报告 (Output Reports)
+```mermaid
+graph LR
+    A["学术稿件"] --> B["预处理"]
+    B --> C["按章节切分"]
+    C --> D["语言审阅"]
+    C --> E["结构审阅"]
+    B --> F["引用核查（可选）"]
+    D --> G["输出报告"]
+    E --> G
+    F --> G
+```
 
-审阅完成后，您的原始初稿将保持不变。系统会生成以下三份报告：
-- `[Proofreading Log]` — 语言修改建议与排版一致性核查明细。
-- `[Structural Flow Log]` — 论证连贯性分析及各章节衔接评估。
-- `[Fact-Check Validation Report]` — 基于本地数据库的事实核查结果。
+整个工作流包含三个审阅轨道：
 
----
+- `linguist`：语言与表达问题
+- `architect`：结构与论证流问题
+- `auditor`：基于文献证据的引用核查
 
-## 为什么选择 `academic-auto-reviewer`？
+## 当前范围
 
-| | 标准 RAG | NotebookLM | Zotero 插件类 | **本项目** |
-|:--|:--:|:--:|:--:|:--:|
-| **核心侧重** | 信息问答 | 知识合成与对话 | 文献阅读辅助 | **系统性审阅** |
-| **事实校验** | 概率化生成 (易幻觉) | 锚定源的对话 | 基于单一文件 | 基于 NLI 的全量核对 |
-| **文献来源** | 云端检索 | 固定的上传文件集 | 单篇文件或目录 | 本地 Zotero 全量库 |
-| **架构设计** | 单次交互机器人 | 封闭式平台 | 轻量化插件 | 多代理并行调度 |
-| **隐私模式** | 依赖云端 | Google 托管 | 桌面本地运行 | 完全本地 — 原生设计 |
-| **规则定制** | 仅限 Prompt | 受限 | 受限 | 不同学科可编辑技能 |
+- 输入格式：Markdown 作为当前工作流的处理格式
+- 常见来源格式：Markdown、Word 和 LaTeX，经转换后进入流程
+- 审阅语言：英文与中文
+- 引用核查后端：本地文献库
+- 当前打包运行时：[Antigravity](https://github.com/google/antigravity)
+- 工作流设计：模块化，可迁移到其他 agent runtime
 
-### 差异化定位与核心优势
+如果你只需要语言和结构审阅，可以跳过引用核查步骤。
 
-目前主流的 AI 文献工具多服务于 **“文献摄入” (Read)** 阶段，即辅助研究者快速理解和总结已有研究。而 `academic-auto-reviewer` 则聚焦于 **“研究输出” (Review)** 阶段——在投稿或发布前，基于已验证的权威文献库对手稿执行系统性的合规校对与实证核实。
+## 为什么做这个项目
 
-#### 与 AI 学术生态的互补性
+很多 AI 工具擅长帮助研究者读文献、做摘要或回答问题。`academic-auto-reviewer` 关注的是另一个阶段：在投稿前审阅你自己的手稿。
 
-- **对比标准 RAG (如 Kimi, Poe 等)**：通用 RAG 模型擅长根据 Prompt 生成文本或摘要。本项目则将 RAG 技术应用于**全自动审阅场景**，无需用户逐句提问，系统即可通过多智能体协作，主动核查稿件中的潜在事实偏差。
-- **对比 NotebookLM**：NotebookLM 是一款优秀的知识合成与源追踪工具。本项目则更侧重于**审阅逻辑的本地化与透明化**。基于 NLI (自然语言推理) 技术，`auditor` 智能体能对每一项实证陈述进行严谨的“支持/矛盾”判定，而非仅提供关联性回答。
-- **对比 Zotero 插件**：传统的插件多侧重于单篇 PDF 的行间交互。本项目通过 `mark-lit-down` 将整个文献库解耦为轻量化的 Markdown 数据库，支持在数千篇文献规模上实现跨领域的并行分析。
+这个工作流试图把常常混在一起的三类任务拆开处理：
 
----
+- 语言清理
+- 结构诊断
+- 基于证据的引用核查
 
-> **注意**：本工作流专为偏好 Markdown 协作环境与命令行工具的研究者设计。如果您的初稿在 Word 或 Google Docs 中，请在执行前先使用 [`pandoc`](https://pandoc.org/) 转换为 Markdown 格式。
+它的目标不是承诺“绝对不会误判”，而是让稿件中的论断更容易被检查、质疑和修正，并尽量把判断建立在本地证据之上。
 
----
+## 文档
 
-## 许可与致谢
+- [Workflow Guide](docs/WORKFLOW_GUIDE.md)
+- [工作流说明（中文）](docs/WORKFLOW_GUIDE_zh.md)
 
-本项目基于 [MIT 许可协议](LICENSE) 发布。版权所有 &copy; 2026 Jidi Cao。
+## 常见问题
 
-### 致谢
-- 本工作流的 Planner 模块核心方法论参考自 [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) 框架。
-- 系统采用高度模块化设计，诚邀研究者在 `.agent/skills/` 目录中集成新的专家智能体，并更新 `orchestrator` 的调度协议。
+### 必须使用 Antigravity 吗？
+
+原则上不必须。这套工作流设计本身是通用的；当前 release 版本只是优先以 Antigravity 形式打包。
+
+### 必须准备本地文献库吗？
+
+只有在需要引用核查时才需要。语言和结构审阅可以单独运行。
+
+### 它会直接修改原稿吗？
+
+不会。工作流会输出审阅报告，原始稿件保持不变。
+
+### 可以处理 Word 或 LaTeX 吗？
+
+可以。当前工作流的处理格式是 Markdown，但你完全可以先用 `pandoc` 等工具把 Word 或 LaTeX 转换后再运行。
+
+## 许可
+
+本项目基于 [MIT License](LICENSE) 发布。版权所有 &copy; 2026 Jidi Cao。
+
+## 致谢
+
+- 任务规划部分参考了 [planning-with-files](https://github.com/othmanadi/planning-with-files) 的思路。
+- 本地文献工作流可与 [mark-lit-down](https://github.com/Jidi1997/mark-lit-down) 配合使用。
